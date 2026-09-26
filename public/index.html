@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS — Sign In</title>
+  <meta name="description" content="NEXUS Multi-Agent Renewable Energy Orchestrator — Powered by Accenture">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Graphik:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body>
+  <!-- Animated background particles -->
+  <canvas id="bg-canvas"></canvas>
+
+  <div class="auth-container">
+    <!-- Left branding panel -->
+    <div class="brand-panel">
+      <div class="brand-content">
+        <div class="brand-logo">
+          <svg viewBox="0 0 60 60" fill="none" class="logo-svg">
+            <circle cx="30" cy="30" r="27" stroke="url(#acn-grad)" stroke-width="2.5" opacity="0.5"/>
+            <circle cx="30" cy="30" r="15" stroke="url(#acn-grad)" stroke-width="2" opacity="0.7"/>
+            <circle cx="30" cy="30" r="5" fill="url(#acn-grad)"/>
+            <line x1="30" y1="3" x2="30" y2="12" stroke="url(#acn-grad)" stroke-width="1.5"/>
+            <line x1="30" y1="48" x2="30" y2="57" stroke="url(#acn-grad)" stroke-width="1.5"/>
+            <line x1="3" y1="30" x2="12" y2="30" stroke="url(#acn-grad)" stroke-width="1.5"/>
+            <line x1="48" y1="30" x2="57" y2="30" stroke="url(#acn-grad)" stroke-width="1.5"/>
+            <defs><linearGradient id="acn-grad" x1="0" y1="0" x2="60" y2="60"><stop offset="0%" stop-color="#A100FF"/><stop offset="100%" stop-color="#7B00CC"/></linearGradient></defs>
+          </svg>
+        </div>
+        <h1 class="brand-title">NEXUS</h1>
+        <p class="brand-subtitle">Multi-Agent Renewable Energy Orchestrator</p>
+        <div class="brand-features">
+          <div class="feature-item"><span class="feature-icon">🤖</span><span>7 Autonomous AI Agents</span></div>
+          <div class="feature-item"><span class="feature-icon">⚡</span><span>Real-Time Energy Optimization</span></div>
+          <div class="feature-item"><span class="feature-icon">🎯</span><span>Nash Bargaining Resolution</span></div>
+          <div class="feature-item"><span class="feature-icon">💥</span><span>Chaos Engineering Testing</span></div>
+        </div>
+        <div class="brand-footer">
+          <span class="powered-by">Powered by</span>
+          <span class="accenture-mark">&gt; accenture</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right auth panel -->
+    <div class="auth-panel">
+      <div class="auth-content">
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+          <button class="auth-tab" id="tab-signup" onclick="switchTab('signup')">Sign Up</button>
+        </div>
+
+        <!-- Login Form -->
+        <form id="form-login" class="auth-form" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label for="login-email">Email Address</label>
+            <input type="email" id="login-email" placeholder="you@company.com" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" placeholder="Enter your password" required autocomplete="current-password">
+          </div>
+          <div id="login-error" class="form-error"></div>
+          <button type="submit" class="btn-primary" id="btn-login">
+            <span class="btn-text">Sign In</span>
+            <span class="btn-loader" style="display:none"></span>
+          </button>
+          <p class="form-hint">Default admin: <code>admin@nexus.energy</code> / <code>admin123</code></p>
+        </form>
+
+        <!-- Signup Form -->
+        <form id="form-signup" class="auth-form" style="display:none" onsubmit="handleSignup(event)">
+          <div class="form-group">
+            <label for="signup-name">Full Name</label>
+            <input type="text" id="signup-name" placeholder="Enter your name" required autocomplete="name">
+          </div>
+          <div class="form-group">
+            <label for="signup-email">Email Address</label>
+            <input type="email" id="signup-email" placeholder="you@company.com" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label for="signup-password">Password</label>
+            <input type="password" id="signup-password" placeholder="Min 6 characters" required minlength="6" autocomplete="new-password">
+          </div>
+          <div class="form-group">
+            <label for="signup-role">Role</label>
+            <div class="role-selector">
+              <label class="role-option">
+                <input type="radio" name="role" value="user" checked>
+                <div class="role-card">
+                  <span class="role-icon">👤</span>
+                  <span class="role-name">User</span>
+                  <span class="role-desc">View dashboards & monitor</span>
+                </div>
+              </label>
+              <label class="role-option">
+                <input type="radio" name="role" value="admin">
+                <div class="role-card">
+                  <span class="role-icon">🛡️</span>
+                  <span class="role-name">Admin</span>
+                  <span class="role-desc">Full control & chaos injection</span>
+                </div>
+              </label>
+            </div>
+          </div>
+          <div id="signup-error" class="form-error"></div>
+          <button type="submit" class="btn-primary" id="btn-signup">
+            <span class="btn-text">Create Account</span>
+            <span class="btn-loader" style="display:none"></span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Check if already logged in
+    (async () => {
+      try {
+        const res = await fetch('/api/me');
+        if (res.ok) {
+          const { user } = await res.json();
+          window.location.href = user.role === 'admin' ? '/admin.html' : '/dashboard.html';
+        }
+      } catch {}
+    })();
+
+    function switchTab(tab) {
+      document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+      document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
+      document.getElementById('form-login').style.display = tab === 'login' ? '' : 'none';
+      document.getElementById('form-signup').style.display = tab === 'signup' ? '' : 'none';
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-login');
+      const errEl = document.getElementById('login-error');
+      errEl.textContent = '';
+      btn.querySelector('.btn-text').style.display = 'none';
+      btn.querySelector('.btn-loader').style.display = '';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: document.getElementById('login-email').value,
+            password: document.getElementById('login-password').value,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Login failed');
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        window.location.href = data.user.role === 'admin' ? '/admin.html' : '/dashboard.html';
+      } catch (err) {
+        errEl.textContent = err.message;
+      } finally {
+        btn.querySelector('.btn-text').style.display = '';
+        btn.querySelector('.btn-loader').style.display = 'none';
+        btn.disabled = false;
+      }
+    }
+
+    async function handleSignup(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-signup');
+      const errEl = document.getElementById('signup-error');
+      errEl.textContent = '';
+      btn.querySelector('.btn-text').style.display = 'none';
+      btn.querySelector('.btn-loader').style.display = '';
+      btn.disabled = true;
+
+      try {
+        const role = document.querySelector('input[name="role"]:checked').value;
+        const res = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: document.getElementById('signup-name').value,
+            email: document.getElementById('signup-email').value,
+            password: document.getElementById('signup-password').value,
+            role,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Signup failed');
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        window.location.href = data.user.role === 'admin' ? '/admin.html' : '/dashboard.html';
+      } catch (err) {
+        errEl.textContent = err.message;
+      } finally {
+        btn.querySelector('.btn-text').style.display = '';
+        btn.querySelector('.btn-loader').style.display = 'none';
+        btn.disabled = false;
+      }
+    }
+
+    // Background particles
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resizeCanvas); resizeCanvas();
+
+    for (let i = 0; i < 60; i++) {
+      particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5, r: Math.random() * 2 + 1, o: Math.random() * 0.3 + 0.1 });
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (const p of particles) {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(161, 0, 255, ${p.o})`; ctx.fill();
+      }
+      // Draw connections
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x; const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 150) {
+            ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(161, 0, 255, ${0.06 * (1 - dist / 150)})`; ctx.lineWidth = 1; ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+  </script>
+</body>
+</html>

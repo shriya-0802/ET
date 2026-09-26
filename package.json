@@ -1,0 +1,21 @@
+{
+  "name": "nexus-energy-orchestrator",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Multi-Agent Renewable Energy Orchestrator — ET AI Hackathon",
+  "scripts": {
+    "start": "node --env-file=.env server.js",
+    "dev": "node --env-file=.env --watch server.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^18.0.4",
+    "express": "^4.21.0",
+    "jsonwebtoken": "^9.0.2",
+    "node-fetch": "^3.3.2",
+    "uuid": "^10.0.0",
+    "ws": "^8.18.0"
+  }
+}

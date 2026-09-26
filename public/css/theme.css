@@ -1,0 +1,122 @@
+/* ═══════════════════════════════════════════════════════════════
+   NEXUS — Accenture Enterprise Light Theme
+   Clean, Professional, B2B SaaS Aesthetic
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Accenture Brand Palette ── */
+  --acn-purple: #A100FF;
+  --acn-purple-dark: #7B00CC;
+  --acn-purple-light: #F4E5FF;
+  
+  --acn-black: #000000;
+  --acn-white: #FFFFFF;
+
+  /* ── Backgrounds ── */
+  --bg-primary: #F8F9FA; /* Light gray background */
+  --bg-secondary: #FFFFFF; /* Pure white panels */
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F8F9FA;
+  --bg-input: #FFFFFF;
+
+  /* ── Borders ── */
+  --border-subtle: #E9ECEF;
+  --border-glow: rgba(161, 0, 255, 0.4);
+  --border-active: #A100FF;
+  --border-input: #CED4DA;
+
+  /* ── Text ── */
+  --text-primary: #212529; /* Dark text for readability */
+  --text-secondary: #495057;
+  --text-muted: #868E96;
+  --text-accent: #A100FF;
+
+  /* ── Semantic ── */
+  --c-success: #0CA678;
+  --c-warning: #F59F00;
+  --c-danger: #FA5252;
+  --c-info: #339AF0;
+
+  /* ── Agent Colors ── */
+  --c-nexus: #A100FF;
+  --c-helios: #F59F00; /* Orange/Yellow */
+  --c-aeolus: #339AF0; /* Blue */
+  --c-voltaic: #0CA678; /* Green */
+  --c-mercury: #E64980; /* Pink/Red */
+  --c-oracle: #FD7E14; /* Orange */
+  --c-sentinel: #FA5252; /* Red */
+
+  /* ── Effects ── */
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.02);
+  --shadow-elevated: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  
+  /* ── Radii ── */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* ── Motion ── */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration: 0.2s;
+
+  /* ── Typography ── */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 14px; scroll-behavior: smooth; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Primary Button ── */
+.btn-primary {
+  width: 100%;
+  padding: 12px 20px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--acn-purple);
+  color: var(--acn-white);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--duration) var(--ease);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 2px 4px rgba(161, 0, 255, 0.2);
+}
+
+.btn-primary:hover { 
+  background: var(--acn-purple-dark);
+  box-shadow: 0 4px 6px rgba(161, 0, 255, 0.3);
+  transform: translateY(-1px);
+}
+.btn-primary:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(161, 0, 255, 0.2); }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* ── Loader ── */
+.btn-loader {
+  width: 18px; height: 18px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: #ADB5BD; border-radius: 4px; border: 2px solid var(--bg-primary); }
+::-webkit-scrollbar-thumb:hover { background: #868E96; }
+::selection { background: var(--acn-purple-light); color: var(--acn-purple-dark); }

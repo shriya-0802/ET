@@ -1,0 +1,281 @@
+/* ═══════════════════════════════════════════════════════════════
+   Dashboard Styles — User & Admin Shared (Enterprise Light)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Header ── */
+.dash-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 28px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+
+.dash-header-left { display: flex; align-items: center; gap: 24px; }
+
+.dash-logo {
+  display: flex; align-items: center; gap: 12px; text-decoration: none;
+}
+
+.dash-logo svg { width: 36px; height: 36px; }
+
+.dash-logo-text h1 {
+  font-size: 1.25rem; font-weight: 700; letter-spacing: 1px;
+  color: var(--text-primary);
+}
+
+.dash-logo-text p {
+  font-size: 0.75rem; color: var(--text-secondary);
+}
+
+.dash-clock {
+  display: flex; align-items: center; gap: 12px;
+  padding: 6px 16px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.dash-clock .clock-label {
+  font-size: 0.65rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;
+}
+
+.dash-clock .clock-value {
+  font-family: var(--font-mono); font-size: 1.1rem; font-weight: 600; color: var(--acn-purple);
+}
+
+.dash-clock .clock-day { font-size: 0.8rem; color: var(--text-secondary); font-weight: 500; }
+
+.dash-header-right { display: flex; align-items: center; gap: 16px; }
+
+.user-badge {
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 16px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem; color: var(--text-primary); font-weight: 500;
+}
+
+.user-badge .user-role {
+  padding: 2px 8px; border-radius: var(--radius-sm);
+  background: var(--acn-purple-light); color: var(--acn-purple-dark);
+  font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+}
+
+.btn-logout {
+  padding: 8px 16px; border: 1px solid var(--border-input);
+  border-radius: var(--radius-sm); background: var(--bg-secondary);
+  color: var(--text-secondary); font-family: var(--font-sans);
+  font-size: 0.85rem; font-weight: 500; cursor: pointer;
+  transition: all var(--duration) var(--ease);
+}
+
+.btn-logout:hover { border-color: var(--c-danger); color: var(--c-danger); background: #FFF5F5; }
+
+/* ── Live Badge ── */
+.badge-live {
+  padding: 4px 12px; border-radius: var(--radius-full);
+  background: #E6FCF5; color: var(--c-success);
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.5px;
+}
+
+/* ── Metrics Bar ── */
+.metrics-bar {
+  display: grid; grid-template-columns: repeat(6, 1fr);
+  gap: 16px; padding: 20px 28px;
+}
+
+.metric-card {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+.metric-icon {
+  font-size: 1.4rem; width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-full);
+  background: var(--acn-purple-light);
+  color: var(--acn-purple-dark);
+}
+
+.metric-info { display: flex; flex-direction: column; }
+.metric-value { font-family: var(--font-mono); font-size: 1.3rem; font-weight: 700; color: var(--text-primary); line-height: 1.2; margin-bottom: 2px; }
+.metric-label { font-size: 0.75rem; color: var(--text-secondary); font-weight: 500; }
+
+/* ── Panels ── */
+.dash-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  gap: 20px; padding: 0 28px 28px;
+}
+
+.panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  display: flex; flex-direction: column;
+}
+
+.panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-primary);
+}
+
+.panel-header h2 { font-size: 1rem; font-weight: 600; color: var(--text-primary); }
+
+.panel-badge {
+  font-size: 0.7rem; padding: 4px 10px; border-radius: var(--radius-sm);
+  background: var(--acn-purple-light); color: var(--acn-purple-dark);
+  font-weight: 600;
+}
+
+.panel-body { padding: 20px; flex: 1; }
+
+/* ── Agent Cards ── */
+.agent-grid { display: flex; flex-direction: column; gap: 12px; max-height: 650px; overflow-y: auto; padding-right: 4px; }
+
+.agent-card {
+  padding: 14px; border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
+  border-left: 4px solid var(--agent-color);
+  box-shadow: var(--shadow-card);
+}
+
+.agent-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+
+.agent-dot { display: none; } /* Removed glowing dot */
+
+.agent-name { font-size: 0.85rem; font-weight: 700; color: var(--text-primary); }
+.agent-role { font-size: 0.75rem; color: var(--text-secondary); margin-left: auto; }
+.agent-status { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 500; text-transform: uppercase; }
+
+.agent-decision {
+  font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-primary);
+  background: var(--bg-primary); padding: 8px 10px;
+  border-radius: var(--radius-sm); border: 1px solid var(--border-input);
+  line-height: 1.5;
+}
+
+/* ── Chart Panel ── */
+.chart-tabs { display: flex; gap: 8px; }
+.tab-btn {
+  padding: 6px 14px; border: 1px solid var(--border-input);
+  border-radius: var(--radius-sm); background: var(--bg-secondary);
+  color: var(--text-secondary); font-size: 0.8rem; font-weight: 500;
+  cursor: pointer; transition: all var(--duration) var(--ease);
+  font-family: var(--font-sans);
+}
+.tab-btn:hover { background: var(--bg-primary); color: var(--text-primary); }
+.tab-btn.active { background: var(--acn-purple-light); color: var(--acn-purple-dark); border-color: var(--acn-purple); font-weight: 600; }
+
+/* ── Reasoning Feed ── */
+.reasoning-feed { display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; }
+
+.reasoning-entry {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 12px; border-radius: var(--radius-sm);
+  background: var(--bg-primary); border: 1px solid var(--border-subtle);
+}
+
+.reasoning-agent-tag {
+  font-size: 0.65rem; font-weight: 600; padding: 2px 8px;
+  border-radius: var(--radius-full); color: white; white-space: nowrap; flex-shrink: 0;
+}
+
+.reasoning-msg { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-primary); line-height: 1.4; }
+
+/* ── Chaos Panel ── */
+.chaos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+
+.chaos-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 16px 10px; border: 1px solid var(--border-input);
+  border-radius: var(--radius-md); background: var(--bg-secondary);
+  color: var(--text-primary); cursor: pointer; text-align: center;
+  transition: all var(--duration) var(--ease);
+  box-shadow: var(--shadow-card);
+}
+
+.chaos-btn:hover { border-color: var(--c-danger); background: #FFF5F5; }
+.chaos-btn .chaos-icon { font-size: 1.6rem; }
+.chaos-btn .chaos-name { font-size: 0.75rem; font-weight: 600; }
+
+.chaos-random-btn {
+  padding: 8px 16px; border: 1px solid var(--c-danger);
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary); color: var(--c-danger);
+  font-size: 0.85rem; font-weight: 600; cursor: pointer;
+  transition: all var(--duration) var(--ease);
+}
+.chaos-random-btn:hover { background: var(--c-danger); color: white; }
+
+.chaos-active-list { display: flex; flex-direction: column; gap: 10px; }
+.chaos-active-title { font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; margin-bottom: 8px; }
+
+.chaos-event-active {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; border-radius: var(--radius-md);
+  border-left: 4px solid var(--c-danger);
+  background: #FFF5F5; border-right: 1px solid var(--border-subtle); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);
+}
+
+.chaos-evt-name { font-size: 0.85rem; font-weight: 600; color: var(--c-danger); }
+.chaos-evt-desc { font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px; }
+.chaos-evt-timer { margin-left: auto; font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-primary); font-weight: 600; }
+
+/* ── Sim Controls (Admin) ── */
+.sim-controls { display: flex; align-items: center; gap: 10px; }
+
+.ctrl-btn {
+  width: 40px; height: 40px;
+  border: 1px solid var(--border-input); border-radius: var(--radius-sm);
+  background: var(--bg-secondary); color: var(--text-secondary);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all var(--duration) var(--ease);
+}
+
+.ctrl-btn:hover { background: var(--bg-primary); color: var(--text-primary); border-color: var(--text-secondary); }
+
+.ctrl-play {
+  width: 48px; height: 48px; border-radius: var(--radius-full);
+  background: var(--acn-purple); border: none; color: white;
+}
+.ctrl-play:hover { background: var(--acn-purple-dark); color: white; }
+.ctrl-play.active { background: var(--c-danger); }
+
+.speed-btn {
+  width: auto !important; padding: 0 16px;
+  font-family: var(--font-mono) !important; font-size: 0.9rem; font-weight: 600;
+}
+
+/* ── Weather Overlay ── */
+.weather-overlay { display: none; } /* Removed floating weather overlay for cleaner look */
+
+/* ── Admin Users Table ── */
+.users-table { width: 100%; border-collapse: collapse; }
+.users-table th, .users-table td { padding: 14px 16px; text-align: left; }
+.users-table th { color: var(--text-secondary); font-size: 0.75rem; font-weight: 600; border-bottom: 2px solid var(--border-subtle); background: var(--bg-primary); }
+.users-table td { color: var(--text-primary); border-bottom: 1px solid var(--border-subtle); font-size: 0.85rem; }
+.users-table tr:hover td { background: var(--bg-primary); }
+
+/* ── Responsive ── */
+@media (max-width: 1200px) {
+  .dash-grid { grid-template-columns: 1fr; }
+  .metrics-bar { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+  .metrics-bar { grid-template-columns: repeat(2, 1fr); }
+  .chaos-grid { grid-template-columns: repeat(2, 1fr); }
+  .dash-clock { display: none; }
+}
