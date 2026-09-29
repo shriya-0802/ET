@@ -1,26 +1,10 @@
 [
   {
-    "id": "fa88c714-a59a-48f2-9457-2b2ea8fa82d5",
+    "id": "fd5f25d6-b383-45cd-ab13-a6e742d8ab06",
     "name": "Admin",
     "email": "admin@nexus.energy",
-    "password": "$2a$10$tsUefBs//xrfjdX4uf3AFeziNQXKDzo2bJ9K7Qh7JJ.CBlJx9ogLq",
+    "password": "$2a$10$OanUvIoNU4cFbyxjyAnp3uGnsvUQd.WiH1Y9BL3ZED/XxTgJF7TLS",
     "role": "admin",
-    "createdAt": "2026-09-26T07:45:07.174Z"
-  },
-  {
-    "id": "383bc15e-7de6-490e-bb2b-9778938df473",
-    "name": "Shriya Mohanty",
-    "email": "shriya.mohaanty2004@gmail.com",
-    "password": "$2a$10$v13Ufli6gGcoJuZkXWumneBPLbC4P4Az1Mvw0NUf1owirvcezCzgK",
-    "role": "user",
-    "createdAt": "2026-09-26T07:45:07.274Z"
-  },
-  {
-    "id": "d0d358d8-a05a-4517-9e93-8cda97e0a404",
-    "name": "Shriya Mohanty",
-    "email": "shriya.mohanty2004@gmail.com",
-    "password": "$2a$10$5xxCa31fTMXude69ooFu9OiwcH31TnNCc5ZvccbZQESpNepnl48p.",
-    "role": "user",
-    "createdAt": "2026-09-26T07:57:15.841Z"
+    "createdAt": "2026-09-29T09:55:37.435Z"
   }
 ]

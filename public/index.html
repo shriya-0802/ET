@@ -7,7 +7,6 @@
   <meta name="description" content="NEXUS Multi-Agent Renewable Energy Orchestrator — Powered by Accenture">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Graphik:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
   <link rel="stylesheet" href="/css/theme.css">
   <link rel="stylesheet" href="/css/auth.css">
@@ -35,10 +34,10 @@
         <h1 class="brand-title">NEXUS</h1>
         <p class="brand-subtitle">Multi-Agent Renewable Energy Orchestrator</p>
         <div class="brand-features">
-          <div class="feature-item"><span class="feature-icon">🤖</span><span>7 Autonomous AI Agents</span></div>
-          <div class="feature-item"><span class="feature-icon">⚡</span><span>Real-Time Energy Optimization</span></div>
-          <div class="feature-item"><span class="feature-icon">🎯</span><span>Nash Bargaining Resolution</span></div>
-          <div class="feature-item"><span class="feature-icon">💥</span><span>Chaos Engineering Testing</span></div>
+          <div class="feature-item"><span>7 Autonomous AI Agents</span></div>
+          <div class="feature-item"><span>Real-Time Energy Optimization</span></div>
+          <div class="feature-item"><span>Nash Bargaining Resolution</span></div>
+          <div class="feature-item"><span>Carbon Credit Trading</span></div>
         </div>
         <div class="brand-footer">
           <span class="powered-by">Powered by</span>
@@ -103,7 +102,7 @@
                 <div class="role-card">
                   <span class="role-icon">🛡️</span>
                   <span class="role-name">Admin</span>
-                  <span class="role-desc">Full control & chaos injection</span>
+                  <span class="role-desc">Full control & chaos testing</span>
                 </div>
               </label>
             </div>
@@ -135,6 +134,9 @@
       document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
       document.getElementById('form-login').style.display = tab === 'login' ? '' : 'none';
       document.getElementById('form-signup').style.display = tab === 'signup' ? '' : 'none';
+      // Clear errors
+      document.getElementById('login-error').textContent = '';
+      document.getElementById('signup-error').textContent = '';
     }
 
     async function handleLogin(e) {
@@ -209,29 +211,45 @@
     const ctx = canvas.getContext('2d');
     let particles = [];
     function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-    window.addEventListener('resize', resizeCanvas); resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
 
-    for (let i = 0; i < 60; i++) {
-      particles.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5, r: Math.random() * 2 + 1, o: Math.random() * 0.3 + 0.1 });
+    for (let i = 0; i < 50; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        r: Math.random() * 2 + 0.5,
+        o: Math.random() * 0.2 + 0.05,
+      });
     }
 
     function animateParticles() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       for (const p of particles) {
-        p.x += p.vx; p.y += p.vy;
+        p.x += p.vx;
+        p.y += p.vy;
         if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
         if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(161, 0, 255, ${p.o})`; ctx.fill();
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(161, 0, 255, ${p.o})`;
+        ctx.fill();
       }
-      // Draw connections
+      // Connections
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x; const dy = particles[i].y - particles[j].y;
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 150) {
-            ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(161, 0, 255, ${0.06 * (1 - dist / 150)})`; ctx.lineWidth = 1; ctx.stroke();
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(161, 0, 255, ${0.04 * (1 - dist / 120)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
           }
         }
       }

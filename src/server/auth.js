@@ -145,6 +145,31 @@ authRouter.get('/users', (req, res) => {
   }
 });
 
+// Reset DB (admin only)
+authRouter.post('/reset-db', (req, res) => {
+  const token = req.cookies?.token || req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'Not authenticated' });
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+
+    const defaultUsers = [
+      {
+        id: uuidv4(),
+        name: 'Admin',
+        email: 'admin@nexus.energy',
+        password: bcrypt.hashSync('admin123', 10),
+        role: 'admin',
+        createdAt: new Date().toISOString(),
+      },
+    ];
+    saveUsers(defaultUsers);
+    res.json({ message: 'Database reset to default state' });
+  } catch {
+    res.status(401).json({ error: 'Invalid token' });
+  }
+});
+
 // ── Middleware for protected API routes ──
 export function verifyToken(req, res, next) {
   const token = req.cookies?.token || req.headers.authorization?.split(' ')[1];

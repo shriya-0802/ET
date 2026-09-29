@@ -24,6 +24,35 @@ export class Simulation {
     const snapshot = this.orchestrator.orchestrate(worldState);
     snapshot.chaosEvents = this.chaos.activeEvents.map(e => ({ id: e.id, name: e.name, icon: e.icon, severity: e.severity, description: e.description, ticksRemaining: e.endTick - this.tick }));
     snapshot.chaosLog = [...this.chaos.eventLog].slice(-10);
+
+    // Dynamic UI Panel Metrics
+    snapshot.automatedIncidentResponse = snapshot.systemAlerts
+      .filter(a => ['critical', 'warning'].includes(a.type))
+      .map(a => ({ type: a.type, message: a.message }))
+      .slice(-3);
+    if (snapshot.automatedIncidentResponse.length === 0) {
+      snapshot.automatedIncidentResponse = [{ type: 'info', message: 'No critical incidents detected recently. All agents nominal.' }];
+    }
+    
+    snapshot.gridSecurityMonitor = this.chaos.activeEvents.length > 0 ? "Anomaly Detected" : "System Secure";
+    snapshot.agentConfidenceScores = {
+        helios: (95 + Math.random() * 4.9).toFixed(1),
+        voltaic: (90 + Math.random() * 9.9).toFixed(1),
+        mercury: (80 + Math.random() * 15.0).toFixed(1)
+    };
+    snapshot.gridInertia = (4.0 + (Math.random() * 0.4 - 0.2)).toFixed(1);
+    
+    // Generate 28 days heatmap dynamically shifting
+    if (!this.heatmapCache) {
+      this.heatmapCache = [];
+      for(let i = 0; i < 28; i++) this.heatmapCache.push(0);
+    }
+    if (this.tick % 5 === 0) {
+      this.heatmapCache.shift();
+      this.heatmapCache.push(Math.random() < 0.1 ? (Math.random() < 0.3 ? 2 : 1) : 0);
+    }
+    snapshot.historicalOutageHeatmap = [...this.heatmapCache];
+
     this.snapshots.push(snapshot);
     if (this.snapshots.length > 200) this.snapshots.shift();
     this.tick++;

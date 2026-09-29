@@ -13,6 +13,7 @@ import { authRouter, verifyToken, JWT_SECRET } from './src/server/auth.js';
 import { Simulation } from './src/engine/simulation.js';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 dotenv.config();
 
@@ -82,6 +83,7 @@ const sim = new Simulation();
 let simRunning = false;
 let simInterval = null;
 let simSpeed = 1;
+let simBaseTick = 1000;
 let latestSnapshot = null;
 
 function startSimulation() {
@@ -90,7 +92,7 @@ function startSimulation() {
   simInterval = setInterval(() => {
     latestSnapshot = sim.step();
     broadcastSnapshot(latestSnapshot);
-  }, 2000 / simSpeed);
+  }, simBaseTick / simSpeed);
 }
 
 function pauseSimulation() {
@@ -103,6 +105,14 @@ function pauseSimulation() {
 
 function setSimSpeed(speed) {
   simSpeed = speed;
+  if (simRunning) {
+    pauseSimulation();
+    startSimulation();
+  }
+}
+
+function setSimBaseTick(tickMs) {
+  simBaseTick = tickMs;
   if (simRunning) {
     pauseSimulation();
     startSimulation();
@@ -148,7 +158,7 @@ wss.on('connection', (ws, req) => {
       const msg = JSON.parse(raw);
 
       // Only admins can control simulation
-      if (user.role !== 'admin' && ['start', 'pause', 'reset', 'speed', 'chaos', 'random_chaos', 'step'].includes(msg.type)) {
+      if (user.role !== 'admin' && ['start', 'pause', 'speed', 'chaos', 'random_chaos', 'step', 'config'].includes(msg.type)) {
         ws.send(JSON.stringify({ type: 'error', message: 'Admin privileges required' }));
         return;
       }
@@ -166,6 +176,7 @@ wss.on('connection', (ws, req) => {
           pauseSimulation();
           sim.reset();
           latestSnapshot = null;
+          startSimulation();
           broadcastStatus();
           broadcast({ type: 'reset' });
           break;
@@ -177,6 +188,11 @@ wss.on('connection', (ws, req) => {
           break;
         case 'speed':
           setSimSpeed(msg.speed || 1);
+          broadcastStatus();
+          break;
+        case 'config':
+          if (msg.baseTick) setSimBaseTick(msg.baseTick);
+          if (msg.maxChaos) sim.chaos.maxConcurrentEvents = msg.maxChaos;
           broadcastStatus();
           break;
         case 'chaos':
@@ -250,6 +266,30 @@ app.get('/api/dataset', verifyToken, (req, res) => {
     dataSource: 'Simulated from MNRE/NIWE/IEX patterns',
     updateFrequency: '15-min intervals (real-time)',
   });
+});
+
+// ── API: Gemini Chatbot ──
+app.post('/api/chat', verifyToken, async (req, res) => {
+  try {
+    const { message } = req.body;
+    if (!message) return res.status(400).json({ error: 'Message is required' });
+
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) return res.status(500).json({ error: 'GEMINI_API_KEY is not configured in .env' });
+
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash-lite" });
+
+    const prompt = `You are NEXUS, an advanced AI orchestrator managing a renewable energy microgrid (solar, wind, batteries). Provide a concise, professional, and helpful response to the operator's query. Answer in plain text (no markdown formatting if possible) to fit cleanly in a small dashboard panel.
+
+User Query: ${message}`;
+    
+    const result = await model.generateContent(prompt);
+    res.json({ response: result.response.text() });
+  } catch (err) {
+    console.error('Chat API Error:', err.message || err);
+    res.status(500).json({ error: err.message || 'Failed to generate response.' });
+  }
 });
 
 // ── Start Server ──

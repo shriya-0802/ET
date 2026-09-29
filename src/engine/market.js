@@ -45,7 +45,7 @@ export class MarketEngine {
     let totalDemand = 0;
     const consumerDemands = [];
     for (const consumer of CONSUMERS) {
-      let demand = consumer.baseDemand * dayFactor + this.smoothNoise(tick, 0.12, consumer.baseDemand) * consumer.baseDemand * 0.1;
+      let demand = consumer.baseDemand * dayFactor + this.smoothNoise(tick, 0.12 + consumer.baseDemand * 0.001) * consumer.baseDemand * 0.1;
       demand = Math.max(consumer.baseDemand * 0.3, demand);
       consumerDemands.push({ ...consumer, currentDemand: Math.round(demand) });
       totalDemand += demand;
