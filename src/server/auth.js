@@ -69,11 +69,42 @@ authRouter.post('/signup', async (req, res) => {
     email,
     password: hashedPassword,
     role: userRole,
+    city: req.body.city || '',
+    state: req.body.state || '',
     createdAt: new Date().toISOString(),
   };
 
   users.push(newUser);
   saveUsers(users);
+  
+  // Inject the user's city into the Global Simulation as a Regional Node
+  if (newUser.city && newUser.state) {
+    try {
+      const geoUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(newUser.city)},${encodeURIComponent(newUser.state)}&limit=1&appid=${process.env.OPENWEATHER_API_KEY}`;
+      const geoRes = await fetch(geoUrl);
+      if (geoRes.ok) {
+        const geoData = await geoRes.json();
+        if (geoData.length > 0) {
+          const { lat, lon } = geoData[0];
+          import('../engine/config.js').then(({ SOLAR_FARMS }) => {
+            SOLAR_FARMS.push({
+              id: `user-${newUser.id.substring(0, 5)}`,
+              name: `${newUser.city}, ${newUser.state} (User Node)`,
+              capacity: 100, // Allocate 100MW to user's region
+              lat,
+              lon
+            });
+            console.log(`🌍 Added new Regional Node for user: ${newUser.city}`);
+            if (global.sim && global.sim.weather) {
+              global.sim.weather.fetchLiveData();
+            }
+          });
+        }
+      }
+    } catch(e) {
+      console.error('Failed to geocode user city', e);
+    }
+  }
 
   const token = jwt.sign(
     { id: newUser.id, name: newUser.name, email: newUser.email, role: newUser.role },

@@ -1,10 +1,10 @@
 [
   {
-    "id": "fd5f25d6-b383-45cd-ab13-a6e742d8ab06",
+    "id": "ddf31deb-268b-4d37-b71d-c918b14125a9",
     "name": "Admin",
     "email": "admin@nexus.energy",
-    "password": "$2a$10$OanUvIoNU4cFbyxjyAnp3uGnsvUQd.WiH1Y9BL3ZED/XxTgJF7TLS",
+    "password": "$2a$10$y9MKsTgGl6rBFWVNsZOQS.DBUdKrc44XPW91jwBRf2FHRG0HPzEFm",
     "role": "admin",
-    "createdAt": "2026-09-29T09:55:37.435Z"
+    "createdAt": "2026-09-29T10:12:56.426Z"
   }
 ]

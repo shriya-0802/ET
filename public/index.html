@@ -86,6 +86,16 @@
             <label for="signup-password">Password</label>
             <input type="password" id="signup-password" placeholder="Min 6 characters" required minlength="6" autocomplete="new-password">
           </div>
+          <div class="form-group" style="display: flex; gap: 10px;">
+            <div style="flex: 1;">
+              <label for="signup-city">City</label>
+              <input type="text" id="signup-city" placeholder="e.g. Mumbai" required>
+            </div>
+            <div style="flex: 1;">
+              <label for="signup-state">State Code</label>
+              <input type="text" id="signup-state" placeholder="e.g. MH" required>
+            </div>
+          </div>
           <div class="form-group">
             <label for="signup-role">Role</label>
             <div class="role-selector">
@@ -189,6 +199,8 @@
             name: document.getElementById('signup-name').value,
             email: document.getElementById('signup-email').value,
             password: document.getElementById('signup-password').value,
+            city: document.getElementById('signup-city').value,
+            state: document.getElementById('signup-state').value,
             role,
           }),
         });

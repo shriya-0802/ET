@@ -80,6 +80,7 @@ app.get('/api/me', (req, res) => {
 
 // ── Simulation Engine (server-side) ──
 const sim = new Simulation();
+global.sim = sim;
 let simRunning = false;
 let simInterval = null;
 let simSpeed = 1;

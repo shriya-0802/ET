@@ -84,7 +84,7 @@ export class WeatherEngine {
     }
     
     const clouds = (this.useLiveData && this.liveData.lastUpdate > 0) 
-      ? this.liveData.solar[farmIndex].clouds 
+      ? (this.liveData.solar[farmIndex]?.clouds || 0)
       : this.getProceduralCloudCover(tick, farmIndex);
       
     solar *= (1 - clouds * 0.8);
@@ -100,7 +100,7 @@ export class WeatherEngine {
   getWindSpeed(tick, farmIndex = 0) {
     let windSpeed = 8;
     if (this.useLiveData && this.liveData.lastUpdate > 0) {
-      windSpeed = this.liveData.wind[farmIndex].speed;
+      windSpeed = (this.liveData.wind[farmIndex]?.speed || 8);
       windSpeed += this.smoothNoise(tick, 0.5, farmIndex) * 1.0; // slight variation
     } else {
       const hour = (tick / 4) % 24;
@@ -122,7 +122,7 @@ export class WeatherEngine {
 
   getTemperature(tick, type = 'solar', farmIndex = 0) {
     if (this.useLiveData && this.liveData.lastUpdate > 0) {
-      return this.liveData[type][farmIndex].temp + this.smoothNoise(tick, 0.1, farmIndex) * 0.5;
+      return (this.liveData[type][farmIndex]?.temp || 28) + this.smoothNoise(tick, 0.1, farmIndex) * 0.5;
     }
     const hour = (tick / 4) % 24;
     return 28 + 8 * Math.sin((hour - 14) / 24 * Math.PI * 2) + this.smoothNoise(tick, 0.03, farmIndex) * 4;
@@ -144,16 +144,16 @@ export class WeatherEngine {
     const solarNodes = SOLAR_FARMS.map((f, i) => ({
       name: f.name,
       temp: this.getTemperature(tick, 'solar', i),
-      clouds: (this.useLiveData && this.liveData.lastUpdate > 0) ? this.liveData.solar[i].clouds : this.getProceduralCloudCover(tick, i),
+      clouds: (this.useLiveData && this.liveData.lastUpdate > 0) ? (this.liveData.solar[i]?.clouds || 0) : this.getProceduralCloudCover(tick, i),
       irradiance: this.getSolarIrradiance(tick, i),
-      desc: (this.useLiveData && this.liveData.lastUpdate > 0) ? this.liveData.solar[i].desc : (this.stormActive ? 'Storm' : 'Clear')
+      desc: (this.useLiveData && this.liveData.lastUpdate > 0) ? (this.liveData.solar[i]?.desc || 'Sunny') : (this.stormActive ? 'Storm' : 'Clear')
     }));
 
     const windNodes = WIND_FARMS.map((f, i) => ({
       name: f.name,
       temp: this.getTemperature(tick, 'wind', i),
       speed: this.getWindSpeed(tick, i),
-      desc: (this.useLiveData && this.liveData.lastUpdate > 0) ? this.liveData.wind[i].desc : (this.stormActive ? 'Storm' : 'Breezy')
+      desc: (this.useLiveData && this.liveData.lastUpdate > 0) ? (this.liveData.wind[i]?.desc || 'Breezy') : (this.stormActive ? 'Storm' : 'Breezy')
     }));
 
     return {

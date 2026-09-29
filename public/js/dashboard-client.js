@@ -56,6 +56,10 @@ let ws;
 let isRunning = false;
 let latestData = null;
 let historicalData = [];
+let userCity = '';
+try { const u = JSON.parse(localStorage.getItem('user')); if (u && u.city) userCity = u.city; } catch(e){}
+let cityHeatmapCache = new Array(28).fill(0);
+let lastHeatmapTick = 0;
 
 // Colors
 const COLORS = {
@@ -358,6 +362,28 @@ function updateDashboard(data) {
   if (clockEl) clockEl.textContent = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
   const dayEl = document.getElementById('clock-day');
   if (dayEl) dayEl.textContent = `Day ${d}`;
+  
+  // Inject User City Info Widget
+  if (userCity && !document.getElementById('user-city-widget')) {
+    const overviewGrid = document.querySelector('[data-tab-pane="overview"]');
+    if (overviewGrid) {
+      const widget = document.createElement('div');
+      widget.id = 'user-city-widget';
+      widget.style.gridColumn = 'span 3';
+      widget.className = 'panel';
+      widget.innerHTML = `<div class="panel-header"><h2>📍 Live Local Feed: ${userCity}</h2><span class="panel-badge" style="background:var(--c-success-light);color:var(--c-success)">Synchronized</span></div><div class="panel-body" style="padding:16px;font-size:0.9rem" id="user-city-data">Fetching local grid telemetry...</div>`;
+      overviewGrid.insertBefore(widget, overviewGrid.firstChild);
+    }
+  }
+  if (userCity) {
+    const widgetData = document.getElementById('user-city-data');
+    if (widgetData) {
+      const node = data.weather.solarNodes.find(n => n.name.includes(userCity));
+      if (node) {
+        widgetData.innerHTML = `<strong>Status:</strong> ${node.desc} &nbsp;|&nbsp; <strong>Temp:</strong> ${node.temp.toFixed(1)}°C &nbsp;|&nbsp; <strong>Cloud Cover:</strong> ${(node.clouds*100).toFixed(0)}% &nbsp;|&nbsp; <strong>Capacity:</strong> 100 MW (User Node) &nbsp;|&nbsp; <strong>Generation:</strong> ${(node.irradiance * 100).toFixed(1)} MW<br><div style="margin-top:8px;font-size:0.8rem;color:var(--text-muted)">The Historical Outage Heatmap and Global Arrays have been updated with ${userCity}'s telemetry.</div>`;
+      }
+    }
+  }
   
   // Top Metrics
   const elRenewable = document.getElementById('val-renewable');
@@ -959,13 +985,37 @@ function updateDynamicPanels(data) {
   const heatmapGrid = document.getElementById('dyn-outage-heatmap-grid');
   if (heatmapGrid && data.historicalOutageHeatmap) {
     const setElText = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
-    heatmapGrid.innerHTML = data.historicalOutageHeatmap.map(val => {
+    
+    let renderMap = data.historicalOutageHeatmap;
+    let label = '0 Outages';
+    
+    if (userCity) {
+      const titleEl = document.getElementById('heatmap-title');
+      if (titleEl) titleEl.textContent = `🗺️ Local Weather Disruptions: ${userCity}`;
+      
+      const node = data.weather.solarNodes.find(n => n.name.includes(userCity));
+      if (node && data.tick - lastHeatmapTick >= 5) {
+        cityHeatmapCache.shift();
+        let severity = 0;
+        if (node.clouds > 0.8 || data.weather.stormActive) severity = 2;
+        else if (node.clouds > 0.4) severity = 1;
+        cityHeatmapCache.push(severity);
+        lastHeatmapTick = data.tick;
+      }
+      renderMap = cityHeatmapCache;
+      const disruptions = renderMap.filter(v => v > 0).length;
+      label = disruptions === 0 ? '0 Disruptions' : disruptions + ' Disruptions';
+    } else {
+      const eventsCount = renderMap.filter(v => v > 0).length;
+      label = eventsCount === 0 ? '0 Outages' : eventsCount + ' Outages';
+    }
+    
+    heatmapGrid.innerHTML = renderMap.map(val => {
       const color = val === 0 ? 'var(--c-success-light)' : val === 1 ? 'var(--c-warning)' : 'var(--c-danger)';
       return `<div style="width:14%; aspect-ratio:1; background:${color}; border-radius:2px; box-shadow:inset 0 0 0 1px rgba(0,0,0,0.05);"></div>`;
     }).join('');
     
-    const eventsCount = data.historicalOutageHeatmap.filter(v => v > 0).length;
-    setElText('dyn-outage-heatmap-sub', eventsCount === 0 ? '0 Outages' : eventsCount + ' Outages');
+    setElText('dyn-outage-heatmap-sub', label);
   }
 }
 

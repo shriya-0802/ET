@@ -42,14 +42,18 @@ export class Simulation {
     };
     snapshot.gridInertia = (4.0 + (Math.random() * 0.4 - 0.2)).toFixed(1);
     
-    // Generate 28 days heatmap dynamically shifting
+    // Generate 28 days heatmap dynamically shifting based on actual chaos events
     if (!this.heatmapCache) {
       this.heatmapCache = [];
       for(let i = 0; i < 28; i++) this.heatmapCache.push(0);
     }
     if (this.tick % 5 === 0) {
       this.heatmapCache.shift();
-      this.heatmapCache.push(Math.random() < 0.1 ? (Math.random() < 0.3 ? 2 : 1) : 0);
+      let severity = 0;
+      if (this.chaos.activeEvents.length > 0) {
+         severity = this.chaos.activeEvents.some(e => e.severity === 'critical') ? 2 : 1;
+      }
+      this.heatmapCache.push(severity);
     }
     snapshot.historicalOutageHeatmap = [...this.heatmapCache];
 
