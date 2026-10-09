@@ -1,6 +1,6 @@
 # NEXUS: Multi-Agent Renewable Energy Orchestrator 🌍⚡
 
-Link-> https://nexus-xgjl.onrender.com
+Link-> https://nexus-orchestrator-ti69.onrender.com/
 
 > **Built for the ET AI Hackathon 2026 | Powered by Accenture**
 
