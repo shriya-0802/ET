@@ -1111,3 +1111,234 @@
 }
 
 @keyframes slide { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+
+/* ── Toast Notification System ── */
+#toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
+  font-size: 0.85rem;
+  max-width: 340px;
+  pointer-events: all;
+  animation: toastIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  position: relative;
+  overflow: hidden;
+}
+
+.toast::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: currentColor;
+  animation: toastTimer 4s linear forwards;
+  border-radius: 0 0 0 10px;
+}
+
+.toast.success { border-left: 3px solid var(--c-success); color: var(--c-success); }
+.toast.warning { border-left: 3px solid var(--c-warning); color: var(--c-warning); }
+.toast.danger  { border-left: 3px solid var(--c-danger); color: var(--c-danger); }
+.toast.info    { border-left: 3px solid var(--c-info); color: var(--c-info); }
+
+.toast-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+.toast-body { flex: 1; }
+.toast-title { font-weight: 700; color: var(--text-primary); margin-bottom: 2px; }
+.toast-msg   { color: var(--text-secondary); font-size: 0.8rem; }
+.toast-close { cursor: pointer; color: var(--text-muted); font-size: 1rem; flex-shrink: 0; transition: color 0.2s; background: none; border: none; }
+.toast-close:hover { color: var(--text-primary); }
+.toast.removing { animation: toastOut 0.3s ease forwards; }
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(40px) scale(0.95); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+@keyframes toastOut {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(40px); }
+}
+@keyframes toastTimer {
+  from { width: 100%; }
+  to   { width: 0%; }
+}
+
+/* ── Export Button ── */
+.btn-export {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-export:hover {
+  background: var(--acn-purple-light);
+  color: var(--acn-purple-dark);
+  border-color: var(--acn-purple);
+}
+.btn-export svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+/* ── Modal ── */
+.nexus-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 20, 0.55);
+  backdrop-filter: blur(4px);
+  z-index: 8000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+.nexus-modal {
+  background: var(--bg-secondary);
+  border-radius: 16px;
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  width: 90%;
+  max-width: 580px;
+  max-height: 85vh;
+  overflow-y: auto;
+  animation: modalIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.nexus-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.nexus-modal-header h3 { font-size: 1rem; font-weight: 800; }
+.nexus-modal-close {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+.nexus-modal-close:hover { background: var(--c-danger-light); color: var(--c-danger); }
+.nexus-modal-body { padding: 24px; }
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.92) translateY(20px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ── Quick Prompt Chips ── */
+.quick-prompts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.prompt-chip {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.prompt-chip:hover {
+  background: var(--acn-purple-light);
+  color: var(--acn-purple-dark);
+  border-color: var(--acn-purple);
+  transform: translateY(-1px);
+}
+
+/* ── Scorecard Pulse ── */
+.metric-card {
+  position: relative;
+  overflow: hidden;
+}
+.metric-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 70% 50%, var(--acn-purple-glow), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.metric-card:hover::after { opacity: 1; }
+
+/* ── Sim Control Buttons (user-facing) ── */
+.sim-ctrl-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sim-ctrl-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sim-ctrl-btn.play  { background: var(--c-success-light); color: var(--c-success); border-color: var(--c-success); }
+.sim-ctrl-btn.pause { background: var(--c-warning-light); color: var(--c-warning); border-color: var(--c-warning); }
+.sim-ctrl-btn.play:hover  { background: var(--c-success); color: white; }
+.sim-ctrl-btn.pause:hover { background: var(--c-warning); color: white; }
+.sim-ctrl-btn svg { width: 14px; height: 14px; fill: currentColor; }
+
+/* ── AI Insight Ticker ── */
+#ai-ticker {
+  background: linear-gradient(90deg, var(--acn-purple-light), var(--bg-secondary));
+  border-top: 1px solid var(--border-subtle);
+  padding: 7px 24px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
+}
+#ai-ticker .ticker-label {
+  flex-shrink: 0;
+  font-weight: 700;
+  color: var(--acn-purple-dark);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#ai-ticker .ticker-text {
+  white-space: nowrap;
+  animation: tickerScroll 30s linear infinite;
+}
+@keyframes tickerScroll {
+  0%   { transform: translateX(100vw); }
+  100% { transform: translateX(-100%); }
+}
+

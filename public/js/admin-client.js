@@ -217,7 +217,7 @@ setInterval(() => {
 
 // ── Global Config Save ──
 document.addEventListener('DOMContentLoaded', () => {
-  const saveBtn = document.querySelector('.dash-grid .panel:last-child .tab-btn');
+  const saveBtn = document.getElementById('btn-save-config');
   const tickInput = document.getElementById('admin-tick-input');
   const chaosInput = document.getElementById('admin-chaos-max');
   

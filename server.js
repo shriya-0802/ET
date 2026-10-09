@@ -279,7 +279,7 @@ app.post('/api/chat', verifyToken, async (req, res) => {
     if (!apiKey) return res.status(500).json({ error: 'GEMINI_API_KEY is not configured in .env' });
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash-lite" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
 
     const prompt = `You are NEXUS, an advanced AI orchestrator managing a renewable energy microgrid (solar, wind, batteries). Provide a concise, professional, and helpful response to the operator's query. Answer in plain text (no markdown formatting if possible) to fit cleanly in a small dashboard panel.
 

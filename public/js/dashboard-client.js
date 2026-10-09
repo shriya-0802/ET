@@ -87,7 +87,7 @@ function connectWS() {
       latestData = msg.data;
       historicalData.push(msg.data);
       if (historicalData.length > 50) historicalData.shift();
-      updateDashboard(msg.data);
+      window.updateDashboard(msg.data);
     } else if (msg.type === 'reset') {
       historicalData = [];
       if (window.mainChart) window.mainChart.data.labels = [];
@@ -1102,12 +1102,12 @@ function initChatbot() {
     messages.scrollTop = messages.scrollHeight;
   };
 
-  const sendMessage = async () => {
-    const msg = input.value.trim();
+  const sendMessage = async (overrideMsg) => {
+    const msg = overrideMsg || input.value.trim();
     if (!msg) return;
     
     appendMessage(user.name, msg, false);
-    input.value = '';
+    if (!overrideMsg) input.value = '';
     sendBtn.textContent = '...';
     sendBtn.disabled = true;
 
@@ -1121,19 +1121,259 @@ function initChatbot() {
       
       if (res.ok) {
         appendMessage('NEXUS Orchestrator', data.response, true);
+        showToast('info', '🤖 NEXUS replied', 'AI response received from Gemini');
       } else {
         appendMessage('System Error', data.error || 'Failed to get response', true);
+        showToast('danger', 'AI Error', data.error || 'Failed to get response');
       }
     } catch (err) {
       appendMessage('System Error', 'Network error. Could not reach AI server.', true);
+      showToast('danger', 'Network Error', 'Could not reach AI server');
     }
     
     sendBtn.textContent = 'Send';
     sendBtn.disabled = false;
   };
 
-  sendBtn.addEventListener('click', sendMessage);
+  sendBtn.addEventListener('click', () => sendMessage());
   input.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') sendMessage();
   });
+
+  // Quick Prompt Chips
+  document.querySelectorAll('.prompt-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const prompt = chip.dataset.prompt;
+      // Switch to chatbot tab
+      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+      const chatbotBtn = document.querySelector('[data-tab-btn="chatbot"]');
+      if (chatbotBtn) chatbotBtn.classList.add('active');
+      document.querySelectorAll('[data-tab-pane]').forEach(pane => {
+        pane.classList.toggle('tab-pane-hidden', pane.dataset.tabPane !== 'chatbot');
+      });
+      // Send the prompt
+      setTimeout(() => sendMessage(prompt), 100);
+    });
+  });
 }
+
+// ── Toast Notification System ──
+function showToast(type, title, message, duration = 4000) {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+
+  const icons = { success: '✅', warning: '⚠️', danger: '🔴', info: 'ℹ️' };
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `
+    <div class="toast-icon">${icons[type] || 'ℹ️'}</div>
+    <div class="toast-body">
+      <div class="toast-title">${title}</div>
+      <div class="toast-msg">${message}</div>
+    </div>
+    <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
+  `;
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add('removing');
+    setTimeout(() => toast.remove(), 300);
+  }, duration);
+}
+window.showToast = showToast;
+
+// ── Export Modal ──
+function openExportModal() {
+  const existing = document.getElementById('nexus-export-modal');
+  if (existing) existing.remove();
+
+  const snapshot = latestData;
+  const backdrop = document.createElement('div');
+  backdrop.className = 'nexus-modal-backdrop';
+  backdrop.id = 'nexus-export-modal';
+
+  const summary = snapshot ? `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+      <div style="background:var(--bg-surface);padding:12px;border-radius:8px;border:1px solid var(--border-light)">
+        <div style="font-size:0.7rem;color:var(--text-muted);font-weight:700;">TICK</div>
+        <div style="font-size:1.3rem;font-weight:800;">${snapshot.tick}</div>
+      </div>
+      <div style="background:var(--bg-surface);padding:12px;border-radius:8px;border:1px solid var(--border-light)">
+        <div style="font-size:0.7rem;color:var(--text-muted);font-weight:700;">HISTORY POINTS</div>
+        <div style="font-size:1.3rem;font-weight:800;">${historicalData.length}</div>
+      </div>
+      <div style="background:var(--bg-surface);padding:12px;border-radius:8px;border:1px solid var(--border-light)">
+        <div style="font-size:0.7rem;color:var(--text-muted);font-weight:700;">RENEWABLE MW</div>
+        <div style="font-size:1.3rem;font-weight:800;color:var(--c-success)">${Math.round(snapshot.paretoMetrics?.totalRenewable || 0)}</div>
+      </div>
+      <div style="background:var(--bg-surface);padding:12px;border-radius:8px;border:1px solid var(--border-light)">
+        <div style="font-size:0.7rem;color:var(--text-muted);font-weight:700;">CARBON CREDITS</div>
+        <div style="font-size:1.3rem;font-weight:800;color:var(--c-success)">${Math.round(snapshot.agents?.mercury?.carbonCredits || 0)}</div>
+      </div>
+    </div>
+  ` : '<p style="color:var(--text-muted)">No simulation data available yet.</p>';
+
+  backdrop.innerHTML = `
+    <div class="nexus-modal">
+      <div class="nexus-modal-header">
+        <h3>📤 Export Simulation Data</h3>
+        <button class="nexus-modal-close" onclick="document.getElementById('nexus-export-modal').remove()">✕</button>
+      </div>
+      <div class="nexus-modal-body">
+        <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:16px;">
+          Download the current simulation snapshot or full history for analysis.
+        </p>
+        ${summary}
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <button onclick="exportJSON()" class="tab-btn active" style="width:100%;padding:12px;border-radius:8px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;">
+            <span>📄</span> Export Current Snapshot (JSON)
+          </button>
+          <button onclick="exportHistoryCSV()" class="btn-export" style="width:100%;padding:12px;border-radius:8px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;font-size:0.9rem;">
+            <span>📊</span> Export History as CSV (${historicalData.length} rows)
+          </button>
+          <button onclick="exportHistoryJSON()" class="btn-export" style="width:100%;padding:12px;border-radius:8px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;font-size:0.9rem;">
+            <span>🗂️</span> Export Full History (JSON)
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  backdrop.addEventListener('click', (e) => {
+    if (e.target === backdrop) backdrop.remove();
+  });
+  document.body.appendChild(backdrop);
+}
+
+function exportJSON() {
+  if (!latestData) return;
+  const blob = new Blob([JSON.stringify(latestData, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = `nexus-snapshot-tick${latestData.tick}.json`; a.click();
+  showToast('success', 'Export Complete', 'Snapshot downloaded as JSON');
+  document.getElementById('nexus-export-modal')?.remove();
+}
+
+function exportHistoryJSON() {
+  if (!historicalData.length) return;
+  const blob = new Blob([JSON.stringify(historicalData, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = `nexus-history-${Date.now()}.json`; a.click();
+  showToast('success', 'Export Complete', `${historicalData.length} snapshots downloaded`);
+  document.getElementById('nexus-export-modal')?.remove();
+}
+
+function exportHistoryCSV() {
+  if (!historicalData.length) return;
+  const rows = [['tick','hour','solar_mw','wind_mw','demand_mw','battery_soc_pct','grid_price','renewable_pct','carbon_credits','frequency']];
+  historicalData.forEach(s => {
+    rows.push([
+      s.tick,
+      s.hour?.toFixed(2),
+      Math.round(s.energyFlow?.solar || 0),
+      Math.round(s.energyFlow?.wind || 0),
+      Math.round(s.energyFlow?.demand || 0),
+      ((s.agents?.voltaic?.batteryStates?.[0]?.soc || 0) * 100).toFixed(1),
+      s.market?.electricityPrice || 0,
+      s.paretoMetrics?.renewableUtil || 0,
+      Math.round(s.agents?.mercury?.carbonCredits || 0),
+      s.agents?.sentinel?.decision?.frequency?.toFixed(3) || '50.000'
+    ]);
+  });
+  const csv = rows.map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = `nexus-history-${Date.now()}.csv`; a.click();
+  showToast('success', 'Export Complete', `${historicalData.length} rows exported as CSV`);
+  document.getElementById('nexus-export-modal')?.remove();
+}
+
+// ── User Sim Toggle (Play/Pause) ──
+function userToggleSim() {
+  const btn = document.getElementById('btn-user-pause');
+  if (!ws || ws.readyState !== WebSocket.OPEN) {
+    showToast('warning', 'Not Connected', 'WebSocket is not connected');
+    return;
+  }
+  if (isRunning) {
+    ws.send(JSON.stringify({ type: 'pause' }));
+    showToast('warning', 'Simulation Paused', 'Grid simulation is now paused');
+    if (btn) {
+      btn.className = 'sim-ctrl-btn play';
+      btn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg> Resume';
+    }
+  } else {
+    ws.send(JSON.stringify({ type: 'start' }));
+    showToast('success', 'Simulation Running', 'Grid simulation resumed');
+    if (btn) {
+      btn.className = 'sim-ctrl-btn pause';
+      btn.innerHTML = '<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Pause';
+    }
+  }
+}
+
+// ── AI Ticker ──
+const tickerMessages = [
+  '⚡ NEXUS Coordinator actively balancing multi-objective Pareto frontier.',
+  '☀️ HELIOS forecasting peak solar generation in the next 2 hours.',
+  '🔋 VOLTAIC optimizing battery SoC for evening demand peak.',
+  '💰 MERCURY scanning IEX market for arbitrage opportunities.',
+  '〰️ SENTINEL maintaining grid frequency within ±0.1 Hz tolerance.',
+  '🌩️ ORACLE predicts moderate cloud cover — solar dispatch adjusted.',
+  '🤝 Nash Bargaining equilibrium converged across all 7 agents.',
+  '🌿 Carbon credits being accumulated — ESG targets on track.',
+  '🛡️ Grid security: Zero-trust node authentication verified.',
+];
+let tickerIdx = 0;
+
+function rotateTicker(data) {
+  const el = document.getElementById('ticker-text');
+  if (!el) return;
+  
+  // Prioritize live data insights
+  let msg = tickerMessages[tickerIdx % tickerMessages.length];
+  if (data) {
+    if (data.chaosEvents?.length > 0) {
+      msg = `⚠️ CHAOS ACTIVE: ${data.chaosEvents[0].name} — ${data.chaosEvents[0].description} | Ticks remaining: ${data.chaosEvents[0].ticksRemaining}`;
+    } else if (data.agents?.sentinel?.decision?.frequency) {
+      const freq = data.agents.sentinel.decision.frequency.toFixed(3);
+      const isOk = Math.abs(freq - 50) < 0.15;
+      msg = isOk
+        ? `✅ Grid stable at ${freq} Hz | Solar: ${Math.round(data.energyFlow?.solar || 0)} MW | Wind: ${Math.round(data.energyFlow?.wind || 0)} MW | Demand: ${Math.round(data.energyFlow?.demand || 0)} MW`
+        : `⚠️ Grid frequency deviation: ${freq} Hz | SENTINEL initiating corrective action`;
+    }
+  }
+  
+  el.style.animation = 'none';
+  el.offsetHeight; // reflow
+  el.textContent = msg;
+  el.style.animation = 'tickerScroll 30s linear infinite';
+  tickerIdx++;
+}
+
+// ── Alert toasts for chaos events ──
+let lastChaosEventCount = 0;
+function checkChaosAlerts(data) {
+  if (!data?.chaosEvents) return;
+  const current = data.chaosEvents.length;
+  if (current > lastChaosEventCount) {
+    const newest = data.chaosEvents[0];
+    showToast('danger', `⚠️ Chaos Detected: ${newest.name}`, newest.description);
+  } else if (current === 0 && lastChaosEventCount > 0) {
+    showToast('success', '✅ Grid Stabilized', 'All chaos events have been resolved by NEXUS.');
+  }
+  lastChaosEventCount = current;
+}
+
+// Override the ws onmessage to include our new features since function hoisting breaks simple wrapping
+const originalWsOnMessage = window.onmessage; // Not window.onmessage, ws.onmessage is assigned inside connectWS
+
+// Safer approach: Just patch the global updateDashboard by replacing it.
+const originalUpdate = updateDashboard;
+window.updateDashboard = function(data) {
+  originalUpdate(data);
+  checkChaosAlerts(data);
+  if (data.tick % 30 === 0) rotateTicker(data);
+};
+
+

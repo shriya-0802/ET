@@ -180,7 +180,7 @@
         <div class="panel-body" style="padding:20px;">
           <div style="margin-bottom:20px;">
             <div style="font-size:0.9rem; font-weight:700; margin-bottom:4px;">Gemini AI Endpoints</div>
-            <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:8px;">Model: gemini-1.5-pro</div>
+            <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:8px;">Model: gemini-3.6-flash</div>
             <div style="padding:10px; background:var(--bg-surface); border:1px solid var(--border-light); border-radius:6px; font-family:var(--font-mono); font-size:0.8rem; color:var(--text-secondary);">
               Status: Active | Latency: <span id="admin-gemini-lat">120ms</span>
             </div>
@@ -206,7 +206,7 @@
             <label style="display:block; font-size:0.8rem; font-weight:700; margin-bottom:6px;">Max Simultaneous Chaos Events</label>
             <input type="number" id="admin-chaos-max" value="3" style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--border-light); background:var(--bg-surface); color:var(--text-primary);">
           </div>
-          <button class="tab-btn active" style="width:100%; padding:12px; border-radius:6px; font-weight:700;">Save Configuration</button>
+          <button id="btn-save-config" class="tab-btn active" style="width:100%; padding:12px; border-radius:6px; font-weight:700;">Save Configuration</button>
         </div>
       </section>
     </div>

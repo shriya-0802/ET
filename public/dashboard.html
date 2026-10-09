@@ -13,6 +13,8 @@
   <link rel="stylesheet" href="/css/dashboard.css">
 </head>
 <body>
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
   <div class="app-layout">
     <!-- ── Sidebar ── -->
     <aside class="sidebar">
@@ -58,7 +60,19 @@
             <span class="clock-day" id="clock-day">Day 1</span>
           </div>
         </div>
-        <div class="dash-header-right">
+        <div class="dash-header-right" style="gap:10px;display:flex;align-items:center;">
+          <!-- Sim Play/Pause controls -->
+          <div class="sim-ctrl-group" id="user-sim-controls">
+            <button class="sim-ctrl-btn pause" id="btn-user-pause" title="Pause Simulation" onclick="userToggleSim()">
+              <svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+              Pause
+            </button>
+          </div>
+          <!-- Export button -->
+          <button class="btn-export" id="btn-export-data" title="Export simulation data" onclick="openExportModal()">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export
+          </button>
           <span class="badge-live" id="sim-badge">● LIVE</span>
           <div class="user-badge">
             <span id="user-name">User</span>
@@ -66,6 +80,11 @@
           </div>
         </div>
       </header>
+      <!-- AI Insight Ticker -->
+      <div id="ai-ticker">
+        <div class="ticker-label">⚡ NEXUS AI</div>
+        <div class="ticker-text" id="ticker-text">Initializing real-time intelligence feed...</div>
+      </div>
 
       <main>
     <!-- ── Top Metrics Bar ── -->
@@ -521,6 +540,15 @@
       <section class="panel" style="flex:1; display:flex; flex-direction:column; margin-bottom:0; min-height:600px;">
         <div class="panel-header"><h2>🤖 NEXUS AI Assistant</h2><span class="panel-badge" style="background:var(--acn-purple-light); color:var(--acn-purple-dark);">Gemini Powered</span></div>
         <div class="panel-body" style="padding:24px; display:flex; flex-direction:column; gap:16px; flex:1; overflow:hidden;">
+          <!-- Quick Prompt Chips -->
+          <div class="quick-prompts" id="quick-prompts">
+            <button class="prompt-chip" data-prompt="What is the current grid frequency and stability status?">📡 Grid Frequency</button>
+            <button class="prompt-chip" data-prompt="How much CO2 have we saved today and what are the carbon credits worth?">🌿 Carbon Credits</button>
+            <button class="prompt-chip" data-prompt="Should we charge or discharge the batteries right now? Give a recommendation.">🔋 Battery Strategy</button>
+            <button class="prompt-chip" data-prompt="What is the current market price and is it a good time to export power to the grid?">💰 Market Price</button>
+            <button class="prompt-chip" data-prompt="Summarize the overall performance of all 7 AI agents this session.">🤖 Agent Summary</button>
+            <button class="prompt-chip" data-prompt="Are there any active chaos events? How is NEXUS responding?">💥 Chaos Status</button>
+          </div>
           <div id="chat-messages" style="flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:12px; padding-right:12px; font-size:0.95rem;">
             <div style="background:var(--bg-surface); padding:16px; border-radius:12px; align-self:flex-start; max-width:85%; border:1px solid var(--border-light); line-height: 1.5;">
               <strong>NEXUS Orchestrator:</strong><br><br>Hello! I am NEXUS, your AI microgrid orchestrator powered by Gemini. How can I assist you with grid operations, forecasting, or market bidding today?

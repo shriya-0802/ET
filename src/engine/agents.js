@@ -18,7 +18,7 @@ const genAI = process.env.GEMINI_API_KEY
   ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
   : null;
 const model = genAI
-  ? genAI.getGenerativeModel({ model: 'gemini-3.8-flash' })
+  ? genAI.getGenerativeModel({ model: 'gemini-3.6-flash' })
   : null;
 
 // ── Utility: Clamp ──
@@ -73,9 +73,18 @@ class BaseAgent {
   }
 
   async askGemini(prompt, tick) {
-    if (!model || this.llmThinking || tick - this.lastLLMTick < 50) return null;
+    // 5 RPM limit -> Max 1 request every 12 seconds.
+    // If tick is 1s, global cooldown of 15 ticks ensures max 4 RPM.
+    // We attach globalLastLLMTick to the class to share across instances.
+    if (BaseAgent.globalLastLLMTick === undefined) BaseAgent.globalLastLLMTick = -9999;
+    
+    // Check both local agent cooldown (50 ticks) and global cooldown (15 ticks)
+    if (!model || this.llmThinking || (tick - this.lastLLMTick < 50) || (tick - BaseAgent.globalLastLLMTick < 15)) return null;
+    
     this.llmThinking = true;
     this.lastLLMTick = tick;
+    BaseAgent.globalLastLLMTick = tick; // Update global cooldown
+
     try {
       const result = await model.generateContent(prompt);
       const text = result.response
@@ -88,8 +97,9 @@ class BaseAgent {
       return text;
     } catch (err) {
       if (err.message && err.message.includes('429')) {
-        console.warn(`[${this.codename}] Gemini API rate limit (429) exceeded. Entering cooldown.`);
-        this.lastLLMTick = tick + 5000; // Cooldown for 5000 ticks
+        console.warn(`[${this.codename}] Gemini API rate limit (429) exceeded. Entering long cooldown.`);
+        this.lastLLMTick = tick + 500; // Local cooldown for this agent
+        BaseAgent.globalLastLLMTick = tick + 120; // Global cooldown for 2 minutes
         this.log(`⚠️ AI Offline (Rate Limit). Agent using local heuristics.`);
         return "AI Operations suspended due to rate limit. Agent in autonomous heuristic mode.";
       }
